@@ -88,6 +88,7 @@ int resize(arraylist *list) {
 int downsize(arraylist *list) {
     list->array = realloc(list->array, sizeof(int) * (list->capacity / 2));
     list->capacity = list->capacity / 2;
+    return 1;
 }
 
 
