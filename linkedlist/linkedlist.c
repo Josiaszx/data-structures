@@ -20,6 +20,7 @@ int del(linkedlist *list); // eliminar ulitmo elemento
 int get(linkedlist *list, int index); // obtener elemento
 int find(linkedlist *list, int num); // buscar elemento
 void printlist(linkedlist *list); // imprimir la lista
+void freelist(linkedlist *list); // liberar memoria utilizada
 
 linkedlist *init_linkedlist() {
     linkedlist *list = (linkedlist *) malloc(sizeof(linkedlist));
@@ -47,26 +48,6 @@ int add(linkedlist *list, int num) {
 
     list->size++;
     return 1;
-    /* Antiguo
-    if (list->size == 0) {
-        list->first = malloc(sizeof(node));
-        list->first->data = num;
-        list->first->next = list->first;
-    } else if (list->size == 1) {
-        list->last = malloc(sizeof(node));
-        list->last->next = NULL;
-        list->last->data = num;
-        list->first->next = list->last;
-    } else {
-        node *tmp = malloc(sizeof(node));
-        tmp->data = num;
-        tmp->next = NULL;
-        list->last->next = tmp;
-        list->last = tmp;
-    }
-    list->size++;
-    return 1;
-    */
 }
 
 int del(linkedlist *list) {
@@ -89,32 +70,13 @@ int del(linkedlist *list) {
     list->last = tmp;
     list->size--;
     return 1;
+}
 
-    /* Antiguo
-    if (list->size == 0) return -1;
-    if (list->size == 1) {
-        free(list->first);
-        free(list->last);
-        list->first = NULL;
-        list->size--;
-        return 1;
-    }
-    if (list->size == 2) {
-        free(list->last);
-        list->last = NULL;
-        list->size--;
-        return 1;
-    }
+int get(linkedlist *list, int index) {
+    if (list == NULL || index >= list->size || index < 0) return -1;
     node *tmp = list->first;
-    for (int i = 1; i < list->size - 1; i++) {
-        tmp = tmp->next;
-    }
-    free(tmp->next);
-    tmp->next = NULL;
-    list->last = tmp;
-    list->size--;
-    return 1;
-    */
+    for (int i = 0; i < index; i++) tmp = tmp->next;
+    return tmp->data;
 }
 
 int find(linkedlist *list, int num) {
@@ -136,6 +98,18 @@ void printlist(linkedlist *list) {
         printf("%d ", tmp->data);
         tmp = tmp->next;
     }
+}
+
+void freelist(linkedlist *list) {
+    if (list == NULL) return;
+
+    node *tmp = list->first;
+    while (tmp != NULL) {
+        node *next = tmp->next;
+        free(tmp);
+        tmp = next;
+    }
+    free(list);
 }
 
 int main() {
@@ -168,6 +142,8 @@ int main() {
 
     printf("\nlist size: %d\n", list->size);
     printlist(list);
+
+    printf("\nnumber in index 3: %d", get(list, 3));
 
     return 0;
 }
